@@ -262,7 +262,7 @@ EOF
 # Configuration variables
 BINARY="govanity"
 OWNER="bryk-io"
-REPO="go-vanityi"
+REPO="go-vanity"
 OS=$(uname_os)
 ARCH=$(uname_arch)
 PREFIX="$OWNER/$REPO"
