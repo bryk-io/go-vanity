@@ -1,0 +1,7 @@
+apiVersion: v2
+name: govanity
+description: Go vanity URLs server
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+home: https://github.com/bryk-io/go-vanity

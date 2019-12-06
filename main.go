@@ -51,6 +51,10 @@ func main() {
 	// Prepare server mux
 	h := newHandler(conf)
 	mux := http.NewServeMux()
+	mux.HandleFunc("/api/ping", func(res http.ResponseWriter, req *http.Request) {
+		res.WriteHeader(http.StatusOK)
+		_, _ = res.Write([]byte("pong"))
+	})
 	mux.HandleFunc("/api/version", func(res http.ResponseWriter, req *http.Request) {
 		js, _ := json.MarshalIndent(versionInfo(), "", "  ")
 		res.Header().Add("Content-Type", "application/json")
@@ -77,7 +81,7 @@ func main() {
 		_, _ = res.Write(index)
 	})
 	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		repo, err := h.getRepo(strings.TrimSuffix(req.RequestURI, "/"))
+		repo, err := h.getRepo(strings.TrimSuffix(req.URL.Path, "/"))
 		if err != nil {
 			res.WriteHeader(http.StatusNotFound)
 			_, _ = res.Write([]byte(err.Error()))

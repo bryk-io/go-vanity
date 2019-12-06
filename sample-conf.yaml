@@ -1,6 +1,6 @@
 host: go.bryk.io
 cache_max_age: 3600
 paths:
-  did-method:
-    repo: https://github.com/bryk-io/did-method
+  sample:
+    repo: https://github.com/bryk-io/sample
     vcs: git

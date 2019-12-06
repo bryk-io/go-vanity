@@ -24,6 +24,9 @@ ca-roots: ## Generate the list of valid CA certificates
 	@docker stop ca-roots
 
 test: ## Run all tests excluding the vendor dependencies
+	# Lint helm charts available
+	helm lint helm/*
+
 	# Static analysis
 	golangci-lint run -v ./...
 	go-consistent -v ./...
@@ -35,7 +38,6 @@ clean: ## Download and compile all dependencies and intermediary products
 	@-rm -rf vendor
 	go mod tidy
 	go mod verify
-	go mod vendor
 
 updates: ## List available updates for direct dependencies
 	# https://github.com/golang/go/wiki/Modules#how-to-upgrade-and-downgrade-dependencies
@@ -59,3 +61,11 @@ docker: ## Build docker image
 	@-docker rmi $(DOCKER_IMAGE):$(VERSION_TAG)
 	@docker build --build-arg VERSION_TAG="$(VERSION_TAG)" --rm -t $(DOCKER_IMAGE):$(VERSION_TAG) .
 	@-rm $(BINARY_NAME)_$(VERSION_TAG)_linux_amd64 ca-roots.crt
+
+release: ## Prepare the artifacts for a new release
+	@-rm -rf release-$(VERSION_TAG)
+	mkdir release-$(VERSION_TAG)
+	make build-for os=linux arch=amd64 dest=release-$(VERSION_TAG)/
+	make build-for os=darwin arch=amd64 dest=release-$(VERSION_TAG)/
+	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
+	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/

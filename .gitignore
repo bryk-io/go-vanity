@@ -15,5 +15,6 @@ vendor/**
 !**/testdata/*.pem
 
 # Artifacts
-govanity
-govanity_*
+/govanity
+/govanity_*
+release-*
