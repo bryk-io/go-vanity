@@ -77,9 +77,9 @@ func main() {
 		_, _ = res.Write(index)
 	})
 	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		repo, err := h.getRepo(req.RequestURI)
+		repo, err := h.getRepo(strings.TrimSuffix(req.RequestURI, "/"))
 		if err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
+			res.WriteHeader(http.StatusNotFound)
 			_, _ = res.Write([]byte(err.Error()))
 			return
 		}
