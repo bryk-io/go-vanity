@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 .PHONY: all
-VERSION_TAG=0.1.0
+VERSION_TAG=0.1.1
 BINARY_NAME=govanity
 DOCKER_IMAGE=govanity
 

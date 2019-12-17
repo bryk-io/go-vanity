@@ -16,8 +16,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var cacheValue string
-
 func main() {
 	// Validate arguments
 	file, port := getParameters()
@@ -52,48 +50,10 @@ func main() {
 		os.Exit(-1)
 	}
 
-	// Prepare server mux
-	h := newHandler(conf)
-	cacheValue = h.cache()
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/ping", func(res http.ResponseWriter, req *http.Request) {
-		setHeaders(res, "text/plain; charset=utf-8", http.StatusOK)
-		_, _ = res.Write([]byte("pong"))
-	})
-	mux.HandleFunc("/api/version", func(res http.ResponseWriter, req *http.Request) {
-		js, _ := json.MarshalIndent(versionInfo(), "", "  ")
-		setHeaders(res, "application/json", http.StatusOK)
-		_, _ = res.Write(js)
-	})
-	mux.HandleFunc("/api/conf", func(res http.ResponseWriter, req *http.Request) {
-		js, _ := json.MarshalIndent(conf, "", "  ")
-		setHeaders(res, "application/json", http.StatusOK)
-		_, _ = res.Write(js)
-	})
-	mux.HandleFunc("/index.html", func(res http.ResponseWriter, req *http.Request) {
-		index, err := h.getIndex()
-		if err != nil {
-			setHeaders(res, "text/plain; charset=utf-8", http.StatusInternalServerError)
-			_, _ = res.Write([]byte(err.Error()))
-			return
-		}
-		setHeaders(res, "text/html; charset=utf-8", http.StatusOK)
-		_, _ = res.Write(index)
-	})
-	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		repo, err := h.getRepo(strings.TrimSuffix(req.URL.Path, "/"))
-		if err != nil {
-			setHeaders(res, "text/plain; charset=utf-8", http.StatusNotFound)
-			_, _ = res.Write([]byte(err.Error()))
-			return
-		}
-		setHeaders(res, "text/html; charset=utf-8", http.StatusOK)
-		_, _ = res.Write(repo)
-	})
-
 	// Start server
+	h := newHandler(conf)
 	fmt.Println("serving on port:", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), getServerMux(h)); err != nil {
 		fmt.Println("server error: ", err)
 		os.Exit(-1)
 	}
@@ -129,11 +89,61 @@ func getParameters() (string, int) {
 	return file, port
 }
 
-func setHeaders(res http.ResponseWriter, ct string, code int) {
-	res.Header().Add("Cache-Control", cacheValue)
+func setHeaders(res http.ResponseWriter, ct string, cache string, code int) {
+	res.Header().Add("Cache-Control", cache)
 	res.Header().Add("Content-Type", ct)
 	res.Header().Add("X-Content-Type-Options", "nosniff")
 	res.Header().Add("X-Go-Vanity-Server-Build", buildCode)
 	res.Header().Add("X-Go-Vanity-Server-Version", coreVersion)
 	res.WriteHeader(code)
+}
+
+func getServerMux(h *handler) *http.ServeMux {
+	mux := http.NewServeMux()
+
+	// Ping
+	mux.HandleFunc("/api/ping", func(res http.ResponseWriter, req *http.Request) {
+		setHeaders(res, "text/plain; charset=utf-8", h.cache(), http.StatusOK)
+		_, _ = res.Write([]byte("pong"))
+	})
+
+	// Version
+	mux.HandleFunc("/api/version", func(res http.ResponseWriter, req *http.Request) {
+		js, _ := json.MarshalIndent(versionInfo(), "", "  ")
+		setHeaders(res, "application/json", h.cache(), http.StatusOK)
+		_, _ = res.Write(js)
+	})
+
+	// Configuration
+	mux.HandleFunc("/api/conf", func(res http.ResponseWriter, req *http.Request) {
+		js, _ := json.MarshalIndent(h.conf, "", "  ")
+		setHeaders(res, "application/json", h.cache(), http.StatusOK)
+		_, _ = res.Write(js)
+	})
+
+	// Main index
+	mux.HandleFunc("/index.html", func(res http.ResponseWriter, req *http.Request) {
+		index, err := h.getIndex()
+		if err != nil {
+			setHeaders(res, "text/plain; charset=utf-8", h.cache(), http.StatusInternalServerError)
+			_, _ = res.Write([]byte(err.Error()))
+			return
+		}
+		setHeaders(res, "text/html; charset=utf-8", h.cache(), http.StatusOK)
+		_, _ = res.Write(index)
+	})
+
+	// Catch-all path
+	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
+		repo, err := h.getRepo(strings.TrimSuffix(req.URL.Path, "/"))
+		if err != nil {
+			setHeaders(res, "text/plain; charset=utf-8", h.cache(), http.StatusNotFound)
+			_, _ = res.Write([]byte(err.Error()))
+			return
+		}
+		setHeaders(res, "text/html; charset=utf-8", h.cache(), http.StatusOK)
+		_, _ = res.Write(repo)
+	})
+
+	return mux
 }
