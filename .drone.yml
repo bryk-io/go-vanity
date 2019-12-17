@@ -1,0 +1,29 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: test
+  pull: if-not-exists
+  image: golang:1.13.4
+  commands:
+  - go test -race -cover -v -failfast ./...
+  environment:
+    GOARCH: amd64
+    GOOS: linux
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+---
+kind: signature
+hmac: e4250e78b93cff66829749524c0d22633dd0c7aba333a6d222d352cd779a938a
+
+...

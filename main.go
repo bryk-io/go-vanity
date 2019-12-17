@@ -1,5 +1,5 @@
 // Package main provides the go-vanity CLI tool, a basic server implementation
-// capable of providing custom URLs to be used for the standard go tools.
+// capable of providing custom URLs to be used by the standard go tools.
 package main
 
 import (

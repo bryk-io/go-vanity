@@ -83,3 +83,8 @@ release:
 	make build-for os=darwin arch=amd64 dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/
+
+## ci-conf: Update CI/CD configuration file
+ci-conf:
+	drone lint .drone.yml
+	@DRONE_SERVER=${BRYK_DRONE_SERVER} DRONE_TOKEN=${BRYK_DRONE_TOKEN} drone sign --save bryk-io/go-vanity
