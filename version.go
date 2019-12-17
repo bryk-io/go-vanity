@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	coreVersion string
-	buildCode string
+	coreVersion    string
+	buildCode      string
 	buildTimestamp string
 )
 
@@ -17,8 +17,8 @@ func versionInfo() map[string]string {
 	var components = map[string]string{
 		"version":    coreVersion,
 		"build_code": buildCode,
-		"os":    fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
-		"go": runtime.Version(),
+		"os":         fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
+		"go":         runtime.Version(),
 	}
 	if buildTimestamp != "" {
 		st, err := strconv.ParseInt(buildTimestamp, 10, 64)

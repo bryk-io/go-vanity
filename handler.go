@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/bryk-io/go-vanity/config"
 )
 
 type repo struct {
@@ -23,11 +21,11 @@ type data struct {
 }
 
 type handler struct {
-	conf *config.Server
+	conf *Configuration
 	data *data
 }
 
-func newHandler(conf *config.Server) *handler {
+func newHandler(conf *Configuration) *handler {
 	h := new(handler)
 	h.conf = conf
 	h.data = &data{

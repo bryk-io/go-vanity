@@ -20,5 +20,5 @@ var repoTpl = template.Must(template.New("repo").Parse(`<!DOCTYPE html>
 <meta name="go-import" content="{{.Import}} {{.VCS}} {{.Source}}">
 <meta name="go-source" content="{{.Import}} {{.Display}}">
 </head>
-<body>Nothing to see here.</body>
+<body><a href="{{.Source}}">{{.Import}} ({{.VCS}})</a></body>
 </html>`))
