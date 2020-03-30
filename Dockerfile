@@ -1,4 +1,4 @@
-FROM scratch
+FROM busybox:1.31.1
 
 ARG VERSION_TAG
 LABEL maintainer="Ben Cessa <ben@bryk.io>"

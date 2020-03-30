@@ -6,11 +6,10 @@ DOCKER_IMAGE=govanity
 
 # Linker tags
 # https://golang.org/cmd/link/
-LD_FLAGS="\
--X 'main.coreVersion=$(VERSION_TAG)' \
--X 'main.buildTimestamp=`date +'%s'`' \
--X 'main.buildCode=`git log --pretty=format:'%H' -n1`' \
-"
+LD_FLAGS += -s -w
+LD_FLAGS += -X main.coreVersion=$(VERSION_TAG)
+LD_FLAGS += -X main.buildTimestamp=$(shell date +'%s')
+LD_FLAGS += -X main.buildCode=$(shell git log --pretty=format:'%H' -n1)
 
 ## help: Prints this help message
 help:
@@ -55,16 +54,16 @@ updates:
 
 ## install: Install the binary to GOPATH and keep cached all compiled artifacts
 install:
-	@go build -v -ldflags $(LD_FLAGS) -i -o ${GOPATH}/bin/$(BINARY_NAME)
+	@go build -v -ldflags '$(LD_FLAGS)' -i -o ${GOPATH}/bin/$(BINARY_NAME)
 
 ## build: Build for the current architecture in use, intended for devevelopment
 build:
-	go build -v -ldflags $(LD_FLAGS) -o $(BINARY_NAME)
+	go build -v -ldflags '$(LD_FLAGS)' -o $(BINARY_NAME)
 
 ## build-for: Build the availabe binaries for the specified 'os' and 'arch'
 build-for:
 	CGO_ENABLED=0 GOOS=$(os) GOARCH=$(arch) \
-	go build -v -ldflags $(LD_FLAGS) \
+	go build -v -ldflags '$(LD_FLAGS)' \
 	-o $(dest)$(BINARY_NAME)_$(VERSION_TAG)_$(os)_$(arch)$(suffix)
 
 ## docker: Build docker image
@@ -84,7 +83,3 @@ release:
 	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/
 
-## ci-conf: Update CI/CD configuration file
-ci-conf:
-	drone lint .drone.yml
-	@DRONE_SERVER=${BRYK_DRONE_SERVER} DRONE_TOKEN=${BRYK_DRONE_TOKEN} drone sign --save bryk-io/go-vanity
