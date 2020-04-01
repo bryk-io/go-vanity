@@ -5,6 +5,9 @@
 # Deps
 vendor/**
 
+# Temporary files
+/tmp
+
 # PKI
 *.crt
 *.csr
