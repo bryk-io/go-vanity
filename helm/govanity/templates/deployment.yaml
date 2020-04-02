@@ -44,10 +44,18 @@ spec:
               containerPort: 9090
               protocol: TCP
           livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            successThreshold: 1
+            failureThreshold: 3
             httpGet:
               path: /api/ping
               port: http
           readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            failureThreshold: 3
             httpGet:
               path: /api/ping
               port: http

@@ -101,7 +101,13 @@ func setHeaders(res http.ResponseWriter, ct string, cache string, code int) {
 
 func logMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		if r.URL.Path != "/api/ping" {
+			addr := r.RemoteAddr
+			if xf := r.Header.Get("X-Real-Ip"); xf != "" {
+				addr = xf
+			}
+			log.Printf("%s %s %s [%s]\n", addr, r.Method, r.URL, r.UserAgent())
+		}
 		handler.ServeHTTP(w, r)
 	})
 }
