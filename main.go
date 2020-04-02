@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -53,7 +54,7 @@ func main() {
 	// Start server
 	h := newHandler(conf)
 	fmt.Println("serving on port:", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), getServerMux(h)); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), logMiddleware(getServerMux(h))); err != nil {
 		fmt.Println("server error: ", err)
 		os.Exit(-1)
 	}
@@ -96,6 +97,13 @@ func setHeaders(res http.ResponseWriter, ct string, cache string, code int) {
 	res.Header().Add("X-Go-Vanity-Server-Build", buildCode)
 	res.Header().Add("X-Go-Vanity-Server-Version", coreVersion)
 	res.WriteHeader(code)
+}
+
+func logMiddleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+		handler.ServeHTTP(w, r)
+	})
 }
 
 func getServerMux(h *handler) *http.ServeMux {

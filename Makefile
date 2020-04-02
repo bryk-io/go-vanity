@@ -72,7 +72,7 @@ docker:
 	@make build-for os=linux arch=amd64
 	@-docker rmi $(DOCKER_IMAGE):$(VERSION_TAG)
 	@docker build --build-arg VERSION_TAG="$(VERSION_TAG)" --rm -t $(DOCKER_IMAGE):$(VERSION_TAG) .
-	@-rm $(BINARY_NAME)_$(VERSION_TAG)_linux_amd64 ca-roots.crt
+	@-rm $(BINARY_NAME)_$(VERSION_TAG)_linux_amd64
 
 ## release: Prepare artifacts for a new tagged release
 release:
