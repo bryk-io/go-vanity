@@ -8,6 +8,10 @@ vendor/**
 # Temporary files
 /tmp
 
+# Packages
+*.zip
+*.tgz
+
 # PKI
 *.crt
 *.csr

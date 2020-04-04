@@ -5,3 +5,13 @@ type: application
 version: 0.1.2
 appVersion: 0.1.1
 home: https://github.com/bryk-io/go-vanity
+icon: https://raw.githubusercontent.com/bryk-io/go-vanity/master/helm/govanity/icon.png
+sources:
+  - https://github.com/bryk-io/go-vanity
+keywords:
+  - go
+  - modules
+maintainers:
+  - name: Ben Cessa
+    email: ben@pixative.com
+    url: https://github.com/bcessa
