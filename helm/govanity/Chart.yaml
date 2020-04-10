@@ -2,7 +2,7 @@ apiVersion: v2
 name: govanity
 description: Go vanity URLs server
 type: application
-version: 0.1.2
+version: 0.1.3
 appVersion: 0.1.1
 home: https://github.com/bryk-io/go-vanity
 icon: https://raw.githubusercontent.com/bryk-io/go-vanity/master/helm/govanity/icon.png

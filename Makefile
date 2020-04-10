@@ -32,8 +32,7 @@ updates:
 ## lint: Static analysis
 lint:
 	helm lint helm/*
-	golangci-lint run ./...
-	go-consistent -v ./...
+	golangci-lint run -v ./...
 
 ## scan: Look for knonwn vulnerabilities in the project dependencies
 # https://github.com/sonatype-nexus-community/nancy
@@ -87,3 +86,7 @@ release:
 	make build-for os=darwin arch=amd64 dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/
+
+## ci-update: Update the signature on the CI configuration file
+ci-update:
+	drone sign bryk-io/go-vanity --save

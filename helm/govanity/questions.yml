@@ -1,0 +1,66 @@
+rancher_min_version: 2.2.0
+questions:
+  - variable: image.repository
+    label: "Image repository"
+    description: "Location to pull the image form."
+    type: string
+    required: true
+    default: "registry.bryk.io/general/govanity"
+    group: "General"
+  - variable: imagePullSecret
+    label: "Registry pull secret."
+    description: "Private registry credentials. Must be a secret accessible on the namespace the app is deployed to."
+    type: secret
+    required: false
+    group: "General"
+  - variable: configuration
+    label: "Vanity server configuration"
+    description: "Define the custom import paths to serve."
+    type: multiline
+    required: true
+    group: "General"
+    default: |-
+      host: custom.company.com
+      cache_max_age: 3600
+      paths:
+        sample:
+          repo: https://github.com/company/sample
+          vcs: git
+        another:
+          repo: https://bitbucket.org/company/another
+          vcs: git
+  - variable: ingress.enabled
+    label: "Expose the service outside the cluster."
+    description: "The service is only accessible to internal cluster services by default."
+    type: boolean
+    default: false
+    required: true
+    group: "General"
+    show_subquestion_if: true
+    subquestions:
+      - variable: ingress.host
+        label: "External URL"
+        description: "Host address where the service will be accessible."
+        type: string
+        required: true
+        default: "custom.company.com"
+      - variable: ingress.tls.enabled
+        label: "Enable TLS communications."
+        description: "Secure communications providing TLS termination by the ingress resource."
+        type: boolean
+        default: true
+        required: true
+      - variable: ingress.tls.secretName
+        label: "TLS secret."
+        description: "Secret containing the TLS certificate."
+        type: secret
+        required: true
+      - variable: ingress.annotations
+        label: "Ingress Annotations"
+        description: "Adjust internal settings for the ingress resource."
+        type: multiline
+        required: false
+        default: >
+          kubernetes.io/ingress.class: "nginx"
+          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+

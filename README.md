@@ -1,4 +1,4 @@
-# go-vanity
+# Go Vanity
 [![Build Status](https://drone.bryk.io/api/badges/bryk-io/go-vanity/status.svg)](https://drone.bryk.io/bryk-io/go-vanity)
 [![Version](https://img.shields.io/github/tag/bryk-io/go-vanity.svg)](https://github.com/bryk-io/go-vanity/releases)
 [![Software License](https://img.shields.io/badge/license-BSD3-red.svg)](LICENSE)

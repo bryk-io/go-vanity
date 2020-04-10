@@ -1,29 +1,132 @@
 ---
 kind: pipeline
-type: docker
-name: default
+type: kubernetes
+name: Continuous Integration
 
 platform:
   os: linux
   arch: amd64
 
 steps:
-- name: test
+- name: Setup environment
   pull: if-not-exists
-  image: golang:1.13.4
+  image: registry.bryk.io/general/golang:1.14
   commands:
-  - go test -race -cover -v -failfast ./...
+  - echo "$DEPLOYMENT_KEY" | base64 -d > /drone/src/key
+  - chmod 400 /drone/src/key
   environment:
-    GOARCH: amd64
-    GOOS: linux
+    DEPLOYMENT_KEY:
+      from_secret: deployment-key
+
+- name: Verify style and consistency
+  pull: if-not-exists
+  image: registry.bryk.io/general/golang:1.14
+  commands:
+  - make lint
+
+- name: Run unit tests
+  pull: if-not-exists
+  image: registry.bryk.io/general/golang:1.14
+  commands:
+  - make test
+
+- name: Build project artifacts
+  pull: if-not-exists
+  image: registry.bryk.io/general/golang:1.14
+  commands:
+  - make build-for os=linux arch=amd64
+  when:
+    ref:
+    - refs/tags/v*
+
+- name: Publish new image version
+  image: plugins/docker
+  settings:
+    build_args:
+    - VERSION=${DRONE_TAG##v}
+    password:
+      from_secret: registry-password
+    registry: registry.bryk.io
+    repo: registry.bryk.io/general/govanity
+    tags: ${DRONE_TAG##v}
+    username:
+      from_secret: registry-user
+  when:
+    ref:
+    - refs/tags/v*
+
+- name: Report result
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack-webhook
+    template: >
+      {{#success build.status}}
+        Build #{{build.number}} on repository {{repo.owner}}/{{repo.name}} succeeded.
+        Author: {{build.author}}
+        Branch: {{build.branch}}
+        Build log is <{{build.link}}|available here>, commit <https://drone.bryk.io/link/{{repo.owner}}/{{repo.name}}/tree/refs/heads/{{build.branch}}?sha={{build.commit}}|source code> for more details.
+      {{else}}
+        Build #{{build.number}} on repository {{repo.owner}}/{{repo.name}} failed.
+        Author: {{build.author}}
+        Branch: {{build.branch}}
+        Build log is <{{build.link}}|available here>, commit <https://drone.bryk.io/link/{{repo.owner}}/{{repo.name}}/tree/refs/heads/{{build.branch}}?sha={{build.commit}}|source code> for more details.
+      {{/success}}
+
+image_pull_secrets:
+- bryk-io-registry
 
 trigger:
-  branch:
-  - master
   event:
   - push
+  - tag
+
+---
+kind: pipeline
+type: kubernetes
+name: Continuous Delivery
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: Run deployment
+  image: registry.bryk.io/general/drone-helm:0.1.0
+  environment:
+    CHART_VALUES:
+      from_secret: chart-values
+    KUBECONFIG:
+      from_secret: kubeconfig
+
+- name: Report result
+  image: plugins/slack
+  settings:
+    webhook:
+      from_secret: slack-webhook
+    template: >
+      {{#success build.status}}
+        Deployment for repository {{repo.owner}}/{{repo.name}} on {{build.deployTo}} target succeeded.
+        Author: {{build.author}}
+        Branch: {{build.branch}}
+        Deployment log is <{{build.link}}|available here>, commit <https://drone.bryk.io/link/{{repo.owner}}/{{repo.name}}/tree/refs/heads/{{build.branch}}?sha={{build.commit}}|source code> for more details.
+      {{else}}
+        Deployment for repository {{repo.owner}}/{{repo.name}} on {{build.deployTo}} target failed.
+        Author: {{build.author}}
+        Branch: {{build.branch}}
+        Deployment log is <{{build.link}}|available here>, commit <https://drone.bryk.io/link/{{repo.owner}}/{{repo.name}}/tree/refs/heads/{{build.branch}}?sha={{build.commit}}|source code> for more details.
+      {{/success}}
+
+image_pull_secrets:
+- bryk-io-registry
+
+trigger:
+  event:
+  - promote
+  - rollback
+
 ---
 kind: signature
-hmac: e4250e78b93cff66829749524c0d22633dd0c7aba333a6d222d352cd779a938a
+hmac: b5abaff687783f4feba7d5f1cbc6b141e29b140eb185116ef39a8b1990e1d5f9
 
 ...
