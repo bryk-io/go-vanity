@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
 .PHONY: all
-VERSION_TAG=0.1.1
+VERSION_TAG=0.1.2
 BINARY_NAME=govanity
-DOCKER_IMAGE_NAME=govanity
+DOCKER_IMAGE_NAME=docker.pkg.github.com/bryk-io/go-vanity/govanity
 
 # Linker tags
 # https://golang.org/cmd/link/
@@ -34,7 +34,7 @@ lint:
 	helm lint helm/*
 	golangci-lint run -v ./...
 
-## scan: Look for knonwn vulnerabilities in the project dependencies
+## scan: Look for known vulnerabilities in the project dependencies
 # https://github.com/sonatype-nexus-community/nancy
 scan:
 	@nancy -quiet go.sum
@@ -52,11 +52,11 @@ ca-roots:
 	@docker cp ca-roots:/ca-roots.crt ca-roots.crt
 	@docker stop ca-roots
 
-## build: Build for the current architecture in use, intended for devevelopment
+## build: Build for the current architecture in use, intended for development
 build:
 	go build -v -ldflags '$(LD_FLAGS)' -o $(BINARY_NAME)
 
-## build-for: Build the availabe binaries for the specified 'os' and 'arch'
+## build-for: Build the available binaries for the specified 'os' and 'arch'
 build-for:
 	CGO_ENABLED=0 GOOS=$(os) GOARCH=$(arch) \
 	go build -v -ldflags '$(LD_FLAGS)' \

@@ -1,4 +1,4 @@
-FROM registry.bryk.io/general/shell:0.1.0
+FROM docker.pkg.github.com/bryk-io/base-images/shell:0.1.0
 
 # Metadata
 ARG VERSION
