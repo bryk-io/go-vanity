@@ -1,8 +1,9 @@
 # Go Vanity
-[![Build Status](https://drone.bryk.io/api/badges/bryk-io/go-vanity/status.svg)](https://drone.bryk.io/bryk-io/go-vanity)
+[![Build Status](https://github.com/bryk-io/go-vanity/workflows/ci/badge.svg?branch=master)](https://github.com/bryk-io/go-vanity/actions)
 [![Version](https://img.shields.io/github/tag/bryk-io/go-vanity.svg)](https://github.com/bryk-io/go-vanity/releases)
 [![Software License](https://img.shields.io/badge/license-BSD3-red.svg)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bryk-io/go-vanity?style=flat)](https://goreportcard.com/report/github.com/bryk-io/go-vanity)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](.github/CODE_OF_CONDUCT.md)
 
 This `go-vanity` tool provides a basic server implementation capable of providing
 custom URLs to be used by the standard go tools.
