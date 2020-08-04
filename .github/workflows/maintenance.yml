@@ -17,8 +17,8 @@ jobs:
           days-before-close: 5
           stale-issue-label: 'stale'
           stale-pr-label: 'stale'
-          exempt-issue-labels: 'help-wanted,awaiting-approval,work-in-progress'
-          exempt-pr-labels: 'help-wanted,awaiting-approval,work-in-progress'
+          exempt-issue-labels: 'help wanted,awaiting approval,work in progress'
+          exempt-pr-labels: 'help wanted,awaiting approval,work in progress'
           stale-issue-message: 'This issue has been marked as **stale** because it has not registered any activity during the last 45 days. If the **stale** label is not removed or no activity is registered, this will be automatically closed in 5 days.'
           close-issue-message: 'This issue has been closed automatically after not registering any activity for 50 consecutive days.'
           stale-pr-message: 'This pull request has been marked as **stale** because it has not registered any activity during the last 45 days. If the **stale** label is not removed or no activity is registered, this will be automatically closed in 5 days.'

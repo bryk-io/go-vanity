@@ -26,3 +26,6 @@ vendor/**
 /govanity_*
 release-*
 secret*
+
+# Code coverage reports
+coverage.*

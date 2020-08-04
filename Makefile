@@ -41,7 +41,8 @@ scan:
 
 ## test: Run unit tests excluding the vendor dependencies
 test:
-	go test -race -cover -v -failfast ./...
+	go test -v -race -failfast -coverprofile=coverage.report ./...
+	go tool cover -html coverage.report -o coverage.html
 
 ## ca-roots: Generate the list of valid CA certificates
 ca-roots:
@@ -86,7 +87,3 @@ release:
 	make build-for os=darwin arch=amd64 dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
 	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/
-
-## ci-update: Update the signature on the CI configuration file
-ci-update:
-	drone sign bryk-io/go-vanity --save
