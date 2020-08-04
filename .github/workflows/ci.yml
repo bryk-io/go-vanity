@@ -37,7 +37,7 @@ jobs:
 
       # Style consistency and static analysis using 'golangci-lint'
       # https://github.com/marketplace/actions/run-golangci-lint
-      - name: Static Analysis
+      - name: Static analysis
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29
@@ -45,6 +45,13 @@ jobs:
       # Run unit tests
       - name: Test
         run: make test
+
+      # Save coverage report as artifact
+      - name: Coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-report
+          path: coverage.html
 
       # Ensure project compile and build successfully
       - name: Build
