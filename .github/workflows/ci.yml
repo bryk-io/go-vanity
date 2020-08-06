@@ -3,15 +3,19 @@ on:
   push:
     branches:
       - master
+    tags:
+      - v*
   pull_request:
     branches:
       - master
   workflow_dispatch: {}
 jobs:
+  # Runs on every push and pull request on the selected branches.
+  # Can also be executed manually.
   test:
     name: code quality and correctness
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       # Go 1.14
       - name: Set up Go 1.14
@@ -26,7 +30,7 @@ jobs:
       # If "vendor" is in cache, restore.
       # To run conditional steps use:
       # if: steps.vendor-cache.outputs.cache-hit != 'true'
-      - name: "Restore modules from cache"
+      - name: Restore modules from cache
         id: vendor-cache
         uses: actions/cache@v2
         env:
@@ -46,17 +50,54 @@ jobs:
       - name: Test
         run: make test
 
-      # Save coverage report as artifact
-      - name: Coverage report
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-report
-          path: coverage.html
-
       # Ensure project compile and build successfully
       - name: Build
-        run: make build
+        run: make build-for os=linux arch=amd64
+
+      # Save artifacts
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: assets
+          path: |
+            coverage.html
+            govanity_*_linux_amd64
 
       # Populate vendor cache to speed up future runs
-      - name: "Populate vendor cache"
+      - name: Populate vendor cache
         run: go mod vendor
+
+  # Runs when a tag is published if 'test' is successful.
+  publish:
+    name: publish package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: test
+    if: ${{ contains(github.ref, 'refs/tags/') }}
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Get previously build assets
+      - uses: actions/download-artifact@v2
+        with:
+          name: assets
+
+      # Prepare assets required for the image
+      - name: Prepare assets
+       run: |
+         mv *_linux_amd64 govanity_linux_amd64
+         chmod +x *_linux_amd64
+
+      # Build and publish docker image
+      - name: Build and publish image
+        uses: docker/build-push-action@v1
+        with:
+          registry: docker.pkg.github.com
+          repository: ${{ github.repository }}/govanity
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          push: true
+          tag_with_ref: true
+          add_git_labels: true

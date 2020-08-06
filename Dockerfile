@@ -10,5 +10,5 @@ VOLUME ["/tmp", "/etc/govanity"]
 EXPOSE 9090/tcp
 
 # Add application binary and use it as default entrypoint
-COPY govanity_${VERSION}_linux_amd64 /usr/bin/govanity
+COPY govanity_linux_amd64 /usr/bin/govanity
 ENTRYPOINT ["/usr/bin/govanity"]

@@ -70,9 +70,10 @@ install:
 ## docker: Build docker image
 docker:
 	make build-for os=linux arch=amd64
+	mv $(BINARY_NAME)_*_linux_amd64 $(BINARY_NAME)_linux_amd64
 	@-docker rmi $(DOCKER_IMAGE_NAME):$(VERSION_TAG)
 	@docker build --build-arg VERSION="$(VERSION_TAG)" --rm -t $(DOCKER_IMAGE_NAME):$(VERSION_TAG) .
-	rm $(BINARY_NAME)_$(VERSION_TAG)_linux_amd64
+	rm $(BINARY_NAME)_linux_amd64
 
 ## docs: Display package documentation on local server
 docs:
