@@ -5,13 +5,8 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/bryk-io/go-vanity?style=flat)](https://goreportcard.com/report/github.com/bryk-io/go-vanity)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](.github/CODE_OF_CONDUCT.md)
 
-This `go-vanity` tool provides a basic server implementation capable of providing
+This `govanity` tool provides a basic server implementation capable of providing
 custom URLs to be used by the standard go tools.
-
-```bash
-# To install latest version
-curl -sfl https://raw.githubusercontent.com/bryk-io/go-vanity/master/install.sh | sh -s -- -b /usr/local/bin
-```
 
 ## Background
 

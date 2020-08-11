@@ -24,7 +24,7 @@ vendor/**
 # Artifacts
 /govanity
 /govanity_*
-release-*
+dist
 secret*
 
 # Code coverage reports

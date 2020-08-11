@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"runtime"
-	"strconv"
 	"time"
 )
 
@@ -21,9 +20,9 @@ func versionInfo() map[string]string {
 		"go":         runtime.Version(),
 	}
 	if buildTimestamp != "" {
-		st, err := strconv.ParseInt(buildTimestamp, 10, 64)
+		rd, err := time.Parse(time.RFC3339, buildTimestamp)
 		if err == nil {
-			components["release_date"] = time.Unix(st, 0).Format(time.RFC822)
+			components["release_date"] = rd.Format(time.RFC822)
 		}
 	}
 	return components

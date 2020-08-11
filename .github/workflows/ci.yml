@@ -2,9 +2,7 @@ name: ci
 on:
   push:
     branches:
-      - master
-    tags:
-      - v*
+      - '*'
   pull_request:
     branches:
       - master
@@ -61,42 +59,7 @@ jobs:
           name: assets
           path: |
             coverage.html
-            govanity_*_linux_amd64
 
       # Populate vendor cache to speed up future runs
       - name: Populate vendor cache
         run: go mod vendor
-  # Runs when a tag is published if 'test' is successful.
-  publish:
-    name: publish package
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: test
-    if: ${{ contains(github.ref, 'refs/tags/') }}
-    steps:
-      # Checkout code
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      # Get previously build assets
-      - uses: actions/download-artifact@v2
-        with:
-          name: assets
-
-      # Prepare assets required for the image
-      - name: Prepare assets
-        run: |
-          mv *_linux_amd64 govanity_linux_amd64
-          chmod +x *_linux_amd64
-
-      # Build and publish docker image
-      - name: Build and publish image
-        uses: docker/build-push-action@v1
-        with:
-          registry: docker.pkg.github.com
-          repository: ${{ github.repository }}/govanity
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          push: true
-          tag_with_ref: true
-          add_git_labels: true

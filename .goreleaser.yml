@@ -1,0 +1,88 @@
+# produced artifacts are stored in this folder
+dist: dist
+# customize execution
+before:
+  hooks:
+    - go mod download
+    - go generate ./...
+# artifacts to produce
+# https://goreleaser.com/customization/build/
+builds:
+  # a single project can support/require several build targets
+  - id: govanity
+    # main binary name
+    binary: govanity
+    # CLI flags for the 'go build' command
+    flags:
+      -v
+    ldflags:
+      - -s -w
+      - -X main.coreVersion={{.Version}}
+      - -X main.buildCode={{.Commit}}
+      - -X main.buildTimestamp={{.CommitDate}}
+    # set the modified timestamp on the output binary to ensure a
+    # reproducible build
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    # disable CGO since it's not supported
+    env:
+      - CGO_ENABLED=0
+    # supported OSs
+    goos:
+      - linux
+      - windows
+      - darwin
+    # supported architectures
+    goarch:
+      - amd64
+# packages to produce
+# https://goreleaser.com/customization/archive/
+archives:
+  # a single project can produce multiple archives
+  -
+    name_template: "govanity_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+# generate integrity checksums
+# https://goreleaser.com/customization/checksum/
+checksum:
+  name_template: 'govanity_{{ .Version }}_checksums.txt'
+  algorithm: sha256
+# Include source code package on the release
+# https://goreleaser.com/customization/source/
+source:
+  enabled: false
+# produce test releases
+# https://goreleaser.com/customization/snapshots/
+snapshot:
+  name_template: '{{ .Tag }}-next'
+# configure the 'CHANGELOG.md' file produced
+# https://goreleaser.com/customization/release/#customize-the-changelog
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - typo
+# Produce homebrew formulas for the project artifacts
+# https://goreleaser.com/customization/homebrew/
+brews:
+  -
+    # Formula name
+    name: govanity
+    # Push the formula to the tap repository
+    skip_upload: false
+    # TAP repository
+    tap:
+      owner: bryk-io
+      name: homebrew-tap
+    # Use 'github-actions' as commit author
+    # https://github.community/t/github-actions-bot-email-address/17204
+    commit_author:
+      name: github-actions
+      email: 41898282+github-actions[bot]@users.noreply.github.com
+    homepage: 'https://github.com/bryk-io/go-vanity'
+    description: |
+      Basic 'Remote Import Path' server for Golang packages.
+    install: |
+      bin.install "govanity"
+    test: |
+      system "#{bin}/govanity -h"

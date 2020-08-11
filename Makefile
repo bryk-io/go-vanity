@@ -1,15 +1,22 @@
-.DEFAULT_GOAL := help
-.PHONY: all
-VERSION_TAG=0.1.2
+.PHONY: *
+.DEFAULT_GOAL:=help
+
+# Project setup
 BINARY_NAME=govanity
-DOCKER_IMAGE_NAME=docker.pkg.github.com/bryk-io/go-vanity/govanity
+DOCKER_IMAGE=docker.pkg.github.com/bryk-io/go-vanity/govanity
+MAINTAINERS='Ben Cessa <ben@pixative.com>'
+
+# State values
+GIT_COMMIT_DATE=$(shell TZ=UTC git log -n1 --pretty=format:'%cd' --date='format-local:%Y-%m-%dT%H:%M:%SZ')
+GIT_COMMIT_HASH=$(shell git log -n1 --pretty=format:'%H')
+GIT_TAG=$(shell git describe --abbrev=0 --match='v*' --always | cut -c 1-8)
 
 # Linker tags
 # https://golang.org/cmd/link/
 LD_FLAGS += -s -w
-LD_FLAGS += -X main.coreVersion=$(VERSION_TAG)
-LD_FLAGS += -X main.buildTimestamp=$(shell date +'%s')
-LD_FLAGS += -X main.buildCode=$(shell git log --pretty=format:'%H' -n1)
+LD_FLAGS += -X main.coreVersion=$(GIT_TAG)
+LD_FLAGS += -X main.buildTimestamp=$(GIT_COMMIT_DATE)
+LD_FLAGS += -X main.buildCode=$(GIT_COMMIT_HASH)
 
 ## help: Prints this help message
 help:
@@ -61,7 +68,7 @@ build:
 build-for:
 	CGO_ENABLED=0 GOOS=$(os) GOARCH=$(arch) \
 	go build -v -ldflags '$(LD_FLAGS)' \
-	-o $(dest)$(BINARY_NAME)_$(VERSION_TAG)_$(os)_$(arch)$(suffix)
+	-o $(BINARY_NAME)_$(os)_$(arch)$(suffix)
 
 ## install: Install the binary to GOPATH and keep cached all compiled artifacts
 install:
@@ -70,9 +77,14 @@ install:
 ## docker: Build docker image
 docker:
 	make build-for os=linux arch=amd64
-	mv $(BINARY_NAME)_*_linux_amd64 $(BINARY_NAME)_linux_amd64
-	@-docker rmi $(DOCKER_IMAGE_NAME):$(VERSION_TAG)
-	@docker build --build-arg VERSION="$(VERSION_TAG)" --rm -t $(DOCKER_IMAGE_NAME):$(VERSION_TAG) .
+	@-docker rmi $(DOCKER_IMAGE):$(GIT_TAG)
+	@docker build \
+	"--label=org.opencontainers.image.title=$(BINARY_NAME)" \
+	"--label=org.opencontainers.image.authors=$(MAINTAINERS)" \
+	"--label=org.opencontainers.image.created=$(GIT_COMMIT_DATE)" \
+	"--label=org.opencontainers.image.revision=$(GIT_COMMIT_HASH)" \
+	"--label=org.opencontainers.image.version=$(GIT_TAG)" \
+	--rm -t $(DOCKER_IMAGE):$(GIT_TAG) .
 	rm $(BINARY_NAME)_linux_amd64
 
 ## docs: Display package documentation on local server
@@ -82,9 +94,4 @@ docs:
 
 ## release: Prepare artifacts for a new tagged release
 release:
-	@-rm -rf release-$(VERSION_TAG)
-	mkdir release-$(VERSION_TAG)
-	make build-for os=linux arch=amd64 dest=release-$(VERSION_TAG)/
-	make build-for os=darwin arch=amd64 dest=release-$(VERSION_TAG)/
-	make build-for os=windows arch=amd64 suffix=".exe" dest=release-$(VERSION_TAG)/
-	make build-for os=windows arch=386 suffix=".exe" dest=release-$(VERSION_TAG)/
+	goreleaser release --skip-validate --skip-publish --rm-dist
