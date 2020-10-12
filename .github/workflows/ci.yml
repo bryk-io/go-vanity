@@ -40,7 +40,7 @@ jobs:
       # Style consistency and static analysis using 'golangci-lint'
       # https://github.com/marketplace/actions/run-golangci-lint
       - name: Static analysis
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v2.2.1
         with:
           version: v1.29
 
