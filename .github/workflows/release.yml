@@ -41,7 +41,7 @@ jobs:
 
       # Build and publish docker image
       - name: Build and publish image
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2.0.1
         with:
           registry: docker.pkg.github.com
           repository: ${{ github.repository }}/govanity
