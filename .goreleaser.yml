@@ -1,3 +1,5 @@
+# main project identifier
+project_name: govanity
 # produced artifacts are stored in this folder
 dist: dist
 # customize execution
@@ -5,6 +7,7 @@ before:
   hooks:
     - go mod download
     - go generate ./...
+    - docker login ghcr.io -u {{ .Env.GITHUB_USER }} -p {{ .Env.GITHUB_TOKEN }}
 # artifacts to produce
 # https://goreleaser.com/customization/build/
 builds:
@@ -38,30 +41,58 @@ builds:
 # https://goreleaser.com/customization/archive/
 archives:
   # a single project can produce multiple archives
-  -
-    name_template: "govanity_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 # generate integrity checksums
 # https://goreleaser.com/customization/checksum/
 checksum:
-  name_template: 'govanity_{{ .Version }}_checksums.txt'
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
   algorithm: sha256
 # Include source code package on the release
 # https://goreleaser.com/customization/source/
 source:
-  enabled: false
+  enabled: true
 # produce test releases
 # https://goreleaser.com/customization/snapshots/
 snapshot:
-  name_template: '{{ .Tag }}-next'
+  name_template: "{{ .Version }}-next"
 # configure the 'CHANGELOG.md' file produced
 # https://goreleaser.com/customization/release/#customize-the-changelog
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
       - typo
+# build and publish docker images
+# https://goreleaser.com/customization/docker/
+dockers:
+  -
+    # GOOS of the built binary that should be used
+    goos: linux
+    # GOARCH of the built binary that should be used
+    goarch: amd64
+    # Dockerfile location
+    dockerfile: Dockerfile
+    # Binaries that should be used
+    binaries:
+      - govanity
+    # Build IDs to gather the binaries from
+    builds:
+      - govanity
+    # OCI image tags
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .CommitDate }}"
+    # Skips the docker push if there is an indicator for prerelease
+    # in the tag e.g. v1.0.0-rc1 (auto)
+    skip_push: auto
+    image_templates:
+      - "ghcr.io/bryk-io/{{ .ProjectName }}:{{ .Version }}"
+      - "ghcr.io/bryk-io/{{ .ProjectName }}:latest"
 # Produce homebrew formulas for the project artifacts
 # https://goreleaser.com/customization/homebrew/
 brews:

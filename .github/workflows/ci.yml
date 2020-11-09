@@ -15,15 +15,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # Go 1.14
-      - name: Set up Go 1.14
+      # Go 1.15
+      - name: Set up Go 1.15
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.14
+          go-version: ^1.15
 
       # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       # If "vendor" is in cache, restore.
       # To run conditional steps use:
@@ -42,7 +44,7 @@ jobs:
       - name: Static analysis
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29
+          version: v1.32
 
       # Run unit tests
       - name: Test

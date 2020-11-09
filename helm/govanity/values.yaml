@@ -6,7 +6,7 @@ nameOverride: ""
 fullnameOverride: ""
 imagePullSecrets: []
 image:
-  repository: docker.pkg.github.com/bryk-io/go-vanity/govanity
+  repository: ghcr.io/bryk-io/govanity
   pullPolicy: IfNotPresent
 
 serviceAccount:
