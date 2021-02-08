@@ -32,7 +32,7 @@ jobs:
       # if: steps.vendor-cache.outputs.cache-hit != 'true'
       - name: Restore vendor from cache
         id: vendor-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v2.1.4
         env:
           cache-name: vendor
         with:
