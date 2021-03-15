@@ -44,7 +44,7 @@ jobs:
       - name: Static analysis
         uses: golangci/golangci-lint-action@v2.4.0
         with:
-          version: v1.32
+          version: v1.38
 
       # Run unit tests
       - name: Test

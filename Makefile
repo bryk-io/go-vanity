@@ -43,8 +43,8 @@ ca-roots:
 	@docker cp ca-roots:/ca-roots.crt ca-roots.crt
 	@docker stop ca-roots
 
-## clean: Download and compile all dependencies and intermediary products
-clean:
+## deps: Download and compile all dependencies and intermediary products
+deps:
 	@-rm -rf vendor
 	go mod tidy
 	go mod verify

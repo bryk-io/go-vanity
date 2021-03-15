@@ -1,5 +1,5 @@
 run:
-  deadline: 2m
+  deadline: 5m
   issues-exit-code: 1
   tests: true
   build-tags: []
@@ -32,7 +32,6 @@ linters:
     - typecheck
     - varcheck
     - gocyclo
-    - maligned
     - goconst
     - depguard
     - misspell
@@ -43,13 +42,27 @@ linters:
     - scopelint
     - bodyclose
     - stylecheck
-    - interfacer
     - unparam
-    - deadcode
-    - gocognit
-    - goimports
-    - unused
+    - durationcheck
+    - unconvert
+    - asciicheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - forcetypeassert
+    - godot
+    - ifshort
+    - noctx
+    - predeclared
+    - scopelint
+    - wastedassign
+    - whitespace
+    #- wrapcheck
+    #- nestif
+    #- funlen
   disable:
+    - deadcode
+    - unused
     - dupl
 issues:
   exclude-use-default: false
@@ -63,24 +76,42 @@ issues:
         - lll
         - nakedret
         - scopelint
+        - funlen
+        - nestif
+        - noctx
 linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: false
   govet:
     check-shadowing: false
+    enable:
+      - atomic
+      - atomicalign
+      - buildtag
+      - cgocall
+      - composites
+      - copylocks
+      - httpresponse
+      - loopclosure
+      - lostcancel
+      - nilfunc
+      - shift
+      - structtag
+      - unmarshal
+      - unreachable
+      - unusedresult
+      - tests
+      #- fieldalignment
   golint:
     min-confidence: 0.8
-    set-exit-status: true
   gofmt:
     simplify: true
   gocyclo:
     min-complexity: 18
-  maligned:
-    suggest-new: true
   goconst:
     min-len: 3
-    min-occurrences: 3
+    min-occurrences: 5
   depguard:
     list-type: blacklist
     include-go-root: false
@@ -99,3 +130,8 @@ linters-settings:
     for-loops: false
   dupl:
     threshold: 150
+  exhaustive:
+    default-signifies-exhaustive: true
+  funlen:
+    lines: 90
+    statements: 70
