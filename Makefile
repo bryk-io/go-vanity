@@ -18,7 +18,6 @@ LD_FLAGS += -X main.coreVersion=$(GIT_TAG)
 LD_FLAGS += -X main.buildTimestamp=$(GIT_COMMIT_DATE)
 LD_FLAGS += -X main.buildCode=$(GIT_COMMIT_HASH)
 
-## help: Prints this help message
 help:
 	@echo "Commands available"
 	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' | sed -e 's/^/ /' | sort
@@ -82,7 +81,7 @@ release:
 ## scan: Look for known vulnerabilities in the project dependencies
 # https://github.com/sonatype-nexus-community/nancy
 scan:
-	@go list -f '{{if not .Indirect}}{{.}}{{end}}' -mod=mod -m all | nancy sleuth -o text
+	@go list -f '{{if not .Indirect}}{{.}}{{end}}' -m all | nancy sleuth --skip-update-check
 
 ## test: Run unit tests excluding the vendor dependencies
 test:

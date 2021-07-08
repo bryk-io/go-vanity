@@ -3,7 +3,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -11,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var sampleConf string = `
+var sampleConf = `
 host: go.bryk.io
 cache_max_age: 3600
 paths:
@@ -118,7 +117,7 @@ func TestServer(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if fmt.Sprintf("%s", response) != "pong" {
+		if string(response) != "pong" {
 			t.Error("invalid response")
 		}
 	})
@@ -153,7 +152,7 @@ func TestServer(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if fmt.Sprintf("%s", response) != "unknown path" {
+		if string(response) != "unknown path" {
 			t.Error("invalid response")
 		}
 	})

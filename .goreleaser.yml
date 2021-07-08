@@ -58,28 +58,30 @@ snapshot:
 # configure the 'CHANGELOG.md' file produced
 # https://goreleaser.com/customization/release/#customize-the-changelog
 changelog:
-  sort: asc
+  # Sorts the changelog by the commit messages (asc, desc or '')
+  sort: ''
+  # Remove certain commit messages from the changelog
   filters:
+    # Standard commit messages can help to produce better changelogs
+    # https://www.conventionalcommits.org/en/v1.0.0/
     exclude:
       - "^docs:"
       - "^test:"
-      - typo
+      - "^chore:"
+      - "^typo:"
 # build and publish docker images
 # https://goreleaser.com/customization/docker/
 dockers:
   -
+    # Build IDs to gather the binaries from
+    ids:
+      - govanity
     # GOOS of the built binary that should be used
     goos: linux
     # GOARCH of the built binary that should be used
     goarch: amd64
     # Dockerfile location
     dockerfile: Dockerfile
-    # Binaries that should be used
-    binaries:
-      - govanity
-    # Build IDs to gather the binaries from
-    builds:
-      - govanity
     # OCI image tags
     build_flag_templates:
       - "--pull"
@@ -87,9 +89,12 @@ dockers:
       - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
       - "--label=org.opencontainers.image.version={{ .Version }}"
       - "--label=org.opencontainers.image.created={{ .CommitDate }}"
+      - "--label=org.opencontainers.image.source=https://github.com/bryk-io/{{ .ProjectName }}"
     # Skips the docker push if there is an indicator for prerelease
     # in the tag e.g. v1.0.0-rc1 (auto)
-    skip_push: auto
+    skip_push: false
+    # Additional files to add/copy into the container image
+    extra_files: []
     image_templates:
       - "ghcr.io/bryk-io/{{ .ProjectName }}:{{ .Version }}"
       - "ghcr.io/bryk-io/{{ .ProjectName }}:latest"

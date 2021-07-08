@@ -1,4 +1,4 @@
-FROM ghcr.io/bryk-io/shell:0.1.0
+FROM ghcr.io/bryk-io/shell:0.2.0
 
 # Expose required ports and volumes
 VOLUME ["/tmp", "/etc/govanity"]

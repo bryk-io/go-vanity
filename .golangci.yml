@@ -24,7 +24,7 @@ linters:
     - errcheck
     - gosimple
     - govet
-    - golint
+    - revive
     - gofmt
     - ineffassign
     - staticcheck
@@ -39,7 +39,6 @@ linters:
     - nakedret
     - prealloc
     - gosec
-    - scopelint
     - bodyclose
     - stylecheck
     - unparam
@@ -48,13 +47,12 @@ linters:
     - asciicheck
     - errorlint
     - exhaustive
-    - exportloopref
     - forcetypeassert
     - godot
     - ifshort
     - noctx
     - predeclared
-    - scopelint
+    - exportloopref
     - wastedassign
     - whitespace
     #- wrapcheck
@@ -75,7 +73,6 @@ issues:
         - gosec
         - lll
         - nakedret
-        - scopelint
         - funlen
         - nestif
         - noctx
@@ -103,8 +100,6 @@ linters-settings:
       - unusedresult
       - tests
       #- fieldalignment
-  golint:
-    min-confidence: 0.8
   gofmt:
     simplify: true
   gocyclo:
