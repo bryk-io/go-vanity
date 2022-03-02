@@ -81,7 +81,7 @@ release:
 ## scan: Look for known vulnerabilities in the project dependencies
 # https://github.com/sonatype-nexus-community/nancy
 scan:
-	@go list -f '{{if not .Indirect}}{{.}}{{end}}' -m all | nancy sleuth --skip-update-check
+	@go list -mod=readonly -f '{{if not .Indirect}}{{.}}{{end}}' -m all | nancy sleuth --skip-update-check
 
 ## test: Run unit tests excluding the vendor dependencies
 test:
