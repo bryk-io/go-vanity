@@ -37,6 +37,11 @@ builds:
     # supported architectures
     goarch:
       - amd64
+      - arm64
+    # windows ARM is not supported
+    ignore:
+      - goos: windows
+        goarch: arm64
 # packages to produce
 # https://goreleaser.com/customization/archive/
 archives:
@@ -92,7 +97,7 @@ dockers:
       - "--label=org.opencontainers.image.source=https://github.com/bryk-io/{{ .ProjectName }}"
     # Skips the docker push if there is an indicator for prerelease
     # in the tag e.g. v1.0.0-rc1 (auto)
-    skip_push: false
+    skip_push: "false"
     # Additional files to add/copy into the container image
     extra_files: []
     image_templates:
@@ -105,7 +110,7 @@ brews:
     # Formula name
     name: govanity
     # Push the formula to the tap repository
-    skip_upload: false
+    skip_upload: "false"
     # TAP repository
     tap:
       owner: bryk-io
