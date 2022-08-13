@@ -44,11 +44,8 @@ ca-roots:
 
 ## deps: Download and compile all dependencies and intermediary products
 deps:
-	@-rm -rf vendor
 	go mod tidy
-	go mod verify
-	go mod download
-	go mod vendor
+	go clean
 
 ## docker: Build docker image
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md

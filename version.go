@@ -18,6 +18,7 @@ func versionInfo() map[string]string {
 		"build_code": buildCode,
 		"os":         fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
 		"go":         runtime.Version(),
+		"release":    releaseCode(),
 	}
 	if buildTimestamp != "" {
 		rd, err := time.Parse(time.RFC3339, buildTimestamp)
@@ -26,4 +27,15 @@ func versionInfo() map[string]string {
 		}
 	}
 	return components
+}
+
+func releaseCode() string {
+	release := "govanity"
+	if coreVersion != "" {
+		release += "@" + coreVersion
+	}
+	if buildCode != "" {
+		release += "+" + buildCode
+	}
+	return release
 }

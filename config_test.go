@@ -3,7 +3,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"testing"
 
@@ -113,7 +113,7 @@ func TestServer(t *testing.T) {
 		if res.StatusCode != http.StatusOK {
 			t.Error("invalid status code")
 		}
-		response, err := ioutil.ReadAll(res.Body)
+		response, err := io.ReadAll(res.Body)
 		if err != nil {
 			t.Error(err)
 		}
@@ -148,7 +148,7 @@ func TestServer(t *testing.T) {
 		if res.StatusCode != http.StatusNotFound {
 			t.Error("invalid status code")
 		}
-		response, err := ioutil.ReadAll(res.Body)
+		response, err := io.ReadAll(res.Body)
 		if err != nil {
 			t.Error(err)
 		}

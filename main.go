@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -26,7 +25,7 @@ func main() {
 	}
 
 	// Read configuration file
-	contents, err := ioutil.ReadFile(filepath.Clean(file))
+	contents, err := os.ReadFile(filepath.Clean(file))
 	if err != nil {
 		fmt.Println("failed to read configuration file: ", err)
 		os.Exit(-1)
