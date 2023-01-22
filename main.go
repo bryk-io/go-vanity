@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -53,7 +54,14 @@ func main() {
 	// Start server
 	h := newHandler(conf)
 	fmt.Println("serving on port:", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), logMiddleware(getServerMux(h))); err != nil {
+	srv := http.Server{
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           logMiddleware(getServerMux(h)),
+		ReadHeaderTimeout: 5 * time.Second,
+		WriteTimeout:      5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+	}
+	if err := srv.ListenAndServe(); err != nil {
 		fmt.Println("server error: ", err)
 		os.Exit(-1)
 	}

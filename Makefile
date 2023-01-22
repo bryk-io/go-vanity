@@ -75,10 +75,10 @@ lint:
 release:
 	goreleaser release --skip-validate --skip-publish --rm-dist
 
-## scan: Look for known vulnerabilities in the project dependencies
+## scan-deps: Look for known vulnerabilities in the project dependencies
 # https://github.com/sonatype-nexus-community/nancy
-scan:
-	@go list -mod=readonly -f '{{if not .Indirect}}{{.}}{{end}}' -m all | nancy sleuth --skip-update-check
+scan-deps:
+	@go list -json -deps ./... | nancy sleuth --skip-update-check
 
 ## test: Run unit tests excluding the vendor dependencies
 test:
