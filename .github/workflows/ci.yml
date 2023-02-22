@@ -30,7 +30,7 @@ jobs:
       # Scan dependencies using Nancy
       # https://github.com/sonatype-nexus-community/nancy-github-action
       - name: Scan dependencies
-        uses: sonatype-nexus-community/nancy-github-action@v1.0.2
+        uses: sonatype-nexus-community/nancy-github-action@v1.0.3
 
   # Runs on every push and pull request on the selected branches.
   # Can also be executed manually.
