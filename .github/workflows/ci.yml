@@ -15,7 +15,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Go
       - name: Set up Go
@@ -46,7 +46,7 @@ jobs:
     steps:
       # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Go
       - name: Set up Go
