@@ -1,0 +1,129 @@
+run:
+  timeout: 10m
+  issues-exit-code: 1
+  tests: true
+  build-tags: []
+  modules-download-mode: readonly
+output:
+  print-issued-lines: true
+  print-linter-name: true
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - revive
+    - gofmt
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - gocyclo
+    - goconst
+    - misspell
+    - lll
+    - nakedret
+    - prealloc
+    - gosec
+    - bodyclose
+    - stylecheck
+    - unparam
+    - durationcheck
+    - unconvert
+    - asciicheck
+    - errorlint
+    - exhaustive
+    - forcetypeassert
+    - godot
+    - noctx
+    - predeclared
+    - exportloopref
+    - whitespace
+    - nestif
+    - funlen
+    # Deprecated linters
+    # - wrapcheck
+    # - ifshort
+    # - varcheck
+    # - structcheck
+    # - deadcode
+  disable:
+    - unused
+    - dupl
+    - depguard
+    - wastedassign
+issues:
+  exclude-use-default: false
+  exclude-dirs:
+    # using some deprecated low level "elliptic" functions
+    - crypto/vrf/*
+  exclude-rules:
+    - path: (.+)_test.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - lll
+        - nakedret
+        - revive
+        - funlen
+        - nestif
+        - noctx
+# https://golangci-lint.run/usage/linters/#linters-configuration
+linters-settings:
+  errcheck:
+    check-blank: false
+    check-type-assertions: true
+    disable-default-exclusions: false
+    # https://github.com/kisielk/errcheck#excluding-functions
+    exclude-functions:
+      - (io.Closer).Close
+      - (net/http.ResponseWriter).Write
+      - (strings.Builder).WriteByte
+      - (strings.Builder).WriteString
+  govet:
+    enable:
+      - atomic
+      - atomicalign
+      - buildtag
+      - cgocall
+      - composites
+      - copylocks
+      - httpresponse
+      - loopclosure
+      - lostcancel
+      - nilfunc
+      - shift
+      - structtag
+      - unmarshal
+      - unreachable
+      - unusedresult
+      - tests
+      # - shadow
+      # - fieldalignment
+  gofmt:
+    simplify: true
+  gocyclo:
+    min-complexity: 18
+  goconst:
+    min-len: 3
+    min-occurrences: 5
+  misspell:
+    locale: US
+    ignore-words: []
+  lll:
+    line-length: 120
+    tab-width: 2
+  nakedret:
+    max-func-lines: 40
+  prealloc:
+    simple: true
+    range-loops: true
+    for-loops: false
+  dupl:
+    threshold: 150
+  exhaustive:
+    default-signifies-exhaustive: true
+  funlen:
+    lines: 90
+    statements: 70
