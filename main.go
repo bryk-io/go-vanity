@@ -123,27 +123,27 @@ func getServerMux(h *handler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// Ping
-	mux.HandleFunc("/api/ping", func(res http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/api/ping", func(res http.ResponseWriter, _ *http.Request) {
 		setHeaders(res, "text/plain; charset=utf-8", h.cache(), http.StatusOK)
 		_, _ = res.Write([]byte("pong"))
 	})
 
 	// Version
-	mux.HandleFunc("/api/version", func(res http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/api/version", func(res http.ResponseWriter, _ *http.Request) {
 		js, _ := json.MarshalIndent(versionInfo(), "", "  ")
 		setHeaders(res, "application/json", h.cache(), http.StatusOK)
 		_, _ = res.Write(js)
 	})
 
 	// Configuration
-	mux.HandleFunc("/api/conf", func(res http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/api/conf", func(res http.ResponseWriter, _ *http.Request) {
 		js, _ := json.MarshalIndent(h.conf, "", "  ")
 		setHeaders(res, "application/json", h.cache(), http.StatusOK)
 		_, _ = res.Write(js)
 	})
 
 	// Main index
-	mux.HandleFunc("/index.html", func(res http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/index.html", func(res http.ResponseWriter, _ *http.Request) {
 		index, err := h.getIndex()
 		if err != nil {
 			setHeaders(res, "text/plain; charset=utf-8", h.cache(), http.StatusInternalServerError)

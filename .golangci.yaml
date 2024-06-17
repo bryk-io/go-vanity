@@ -1,16 +1,10 @@
 run:
-  deadline: 5m
+  timeout: 10m
   issues-exit-code: 1
   tests: true
   build-tags: []
-  skip-dirs-use-default: true
-  skip-files:
-    - ".*\\.pb\\.go$"
-    - ".*\\.pb\\.gw\\.go$"
-    - ".*\\.validator\\.pb\\.go$"
   modules-download-mode: readonly
 output:
-  format: colored-line-number
   print-issued-lines: true
   print-linter-name: true
 linters:
@@ -25,7 +19,6 @@ linters:
     - typecheck
     - gocyclo
     - goconst
-    - depguard
     - misspell
     - lll
     - nakedret
@@ -45,23 +38,26 @@ linters:
     - predeclared
     - exportloopref
     - whitespace
+    - nestif
+    - funlen
     # Deprecated linters
-    #- wrapcheck
-    #- nestif
-    #- funlen
-    #- ifshort
-    #- varcheck
+    # - wrapcheck
+    # - ifshort
+    # - varcheck
+    # - structcheck
+    # - deadcode
   disable:
-    - deadcode
     - unused
     - dupl
-    # https://github.com/golangci/golangci-lint/issues/2649
-    - structcheck
+    - depguard
     - wastedassign
 issues:
   exclude-use-default: false
+  exclude-dirs:
+    # using some deprecated low level "elliptic" functions
+    - crypto/vrf/*
   exclude-rules:
-    - path: _test\.go
+    - path: (.+)_test.go
       linters:
         - gocyclo
         - errcheck
@@ -69,15 +65,23 @@ issues:
         - gosec
         - lll
         - nakedret
+        - revive
         - funlen
         - nestif
         - noctx
+# https://golangci-lint.run/usage/linters/#linters-configuration
 linters-settings:
   errcheck:
-    check-type-assertions: true
     check-blank: false
+    check-type-assertions: true
+    disable-default-exclusions: false
+    # https://github.com/kisielk/errcheck#excluding-functions
+    exclude-functions:
+      - (io.Closer).Close
+      - (net/http.ResponseWriter).Write
+      - (strings.Builder).WriteByte
+      - (strings.Builder).WriteString
   govet:
-    check-shadowing: false
     enable:
       - atomic
       - atomicalign
@@ -95,7 +99,8 @@ linters-settings:
       - unreachable
       - unusedresult
       - tests
-      #- fieldalignment
+      # - shadow
+      # - fieldalignment
   gofmt:
     simplify: true
   gocyclo:
@@ -103,10 +108,6 @@ linters-settings:
   goconst:
     min-len: 3
     min-occurrences: 5
-  depguard:
-    list-type: blacklist
-    include-go-root: false
-    packages: []
   misspell:
     locale: US
     ignore-words: []
@@ -114,7 +115,7 @@ linters-settings:
     line-length: 120
     tab-width: 2
   nakedret:
-    max-func-lines: 30
+    max-func-lines: 40
   prealloc:
     simple: true
     range-loops: true
