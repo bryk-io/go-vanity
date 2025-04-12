@@ -22,7 +22,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.22.x
+          go-version: 1.24.x
 
       # Use goreleaser to create the new release
       # https://github.com/goreleaser/goreleaser-action
