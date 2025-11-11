@@ -30,15 +30,16 @@ func TestNewServerConfig(t *testing.T) {
 	if err := yaml.Unmarshal([]byte(sampleConf), conf); err != nil {
 		t.Error(err)
 	}
-	if conf.Paths["sample"].VCS.String() != "git" {
+	if conf.Paths["sample"].VCS != GIT {
 		t.Error("failed to decode VCS value")
 	}
 
 	// Re-encode in JSON format
-	_, err := json.MarshalIndent(conf, "", "  ")
+	js, err := json.MarshalIndent(conf, "", "  ")
 	if err != nil {
 		t.Error(err)
 	}
+	t.Logf("%s", js)
 }
 
 func TestServer(t *testing.T) {

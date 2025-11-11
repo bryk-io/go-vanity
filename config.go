@@ -1,85 +1,24 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
 
 // VCS represents a specific version control system to match
 // a path against.
-type VCS int
+type VCS string
 
 const (
 	// GIT source control management (https://git-scm.com/).
-	GIT VCS = iota
+	GIT VCS = "git"
 	// HG stands for Mercurial (https://www.mercurial-scm.org/wiki/HgSubversion).
-	HG
+	HG VCS = "hg"
 	// SVN stands for Subversion (https://subversion.apache.org/).
-	SVN
+	SVN VCS = "svn"
 	// BZR stands for Bazaar (https://bazaar.canonical.com/en/).
-	BZR
+	BZR VCS = "bzr"
 )
-
-func (v *VCS) fromString(s string) error {
-	switch s {
-	case "git":
-		*v = GIT
-	case "hg":
-		*v = HG
-	case "svn":
-		*v = SVN
-	case "bzr":
-		*v = BZR
-	default:
-		return errors.New("unknown")
-	}
-	return nil
-}
-
-// String return a proper textual representation for the VCS code.
-func (v VCS) String() string {
-	names := [...]string{
-		"git",
-		"hg",
-		"svn",
-		"bzr",
-	}
-	if int(v) < 0 || int(v) >= len(names) {
-		return "unknown"
-	}
-	return names[v]
-}
-
-// MarshalJSON provides custom JSON encoding.
-func (v VCS) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.String())
-}
-
-// UnmarshalJSON provides custom JSON decoding.
-func (v VCS) UnmarshalJSON(b []byte) error {
-	var s string
-	if err := json.Unmarshal(b, &s); err != nil {
-		return err
-	}
-	return v.fromString(s)
-}
-
-// MarshalYAML provides custom YAML encoding.
-// nolint: unparam
-func (v VCS) MarshalYAML() (interface{}, error) {
-	return v.String(), nil
-}
-
-// UnmarshalYAML provides custom YAML decoding.
-func (v VCS) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	var s string
-	if err := unmarshal(&s); err != nil {
-		return err
-	}
-	return v.fromString(s)
-}
 
 // Configuration provides the required server parameters.
 // Compatible with https://github.com/GoogleCloudPlatform/govanityurls

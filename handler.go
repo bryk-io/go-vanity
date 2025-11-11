@@ -39,7 +39,7 @@ func newHandler(conf *Configuration) *handler {
 		h.data.Repos = append(h.data.Repos, repo{
 			Path:    p,
 			Import:  h.conf.Host + p,
-			VCS:     r.VCS.String(),
+			VCS:     string(r.VCS),
 			Source:  r.Repo,
 			Display: r.SCL(),
 		})

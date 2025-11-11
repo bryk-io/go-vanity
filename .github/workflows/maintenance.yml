@@ -1,13 +1,24 @@
 name: "maintenance"
+permissions: read-all
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *" # daily at midnight
 jobs:
   stale:
     name: "close stale issues and pull requests"
     runs-on: ubuntu-latest
+    permissions:
+      issues: write # for actions/stale to close stale issues
+      pull-requests: write # for actions/stale to close stale PRs
     steps:
-      - uses: actions/stale@v9
+      # Harden workflow runner
+      - name: Harden workflow runner (audit all outbound calls)
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - name: Tag stale issues and PRs
+        uses: actions/stale@5f858e3efba33a5ca4407a664cc011ad407f2008 # v10.1.0
         with:
           # On the 'debug' mode the action will not perform any operation.
           # Add the secret ACTIONS_STEP_DEBUG with a value of 'true' in the repository.
