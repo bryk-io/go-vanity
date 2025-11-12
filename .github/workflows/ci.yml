@@ -65,7 +65,7 @@ jobs:
       # Can be excluded if the commit message contains: [skip scan-secrets]
       # https://github.com/marketplace/actions/trufflehog-oss
       - name: Scan for leaked secrets
-        uses: trufflesecurity/trufflehog@18c7b1fc33e6c16b27ea66ff27cc7e642fb7cd0a # v3.90.6
+        uses: trufflesecurity/trufflehog@f15cb8b37b9b70056bc82a8eb7151f75fad27a71 # v3.90.13
         if: ${{ !contains(env.commit_msg, '[skip scan-secrets]') }}
         with:
           base: "" # scan entire branch
