@@ -75,10 +75,25 @@ lint:
 release:
 	goreleaser release --skip-validate --skip-publish --rm-dist
 
-## scan-deps: Look for known vulnerabilities in the project dependencies
-# https://github.com/sonatype-nexus-community/nancy
+## scan-ci: Look for vulnerabilities in CI Workflows
+# https://docs.zizmor.sh/usage/
+scan-ci:
+	actionlint
+	zizmor --gh-token `gh auth token` .github/workflows
+
+## scan-deps: Scan code and dependencies for known vulnerabilities
+# https://appsec.guide/docs/static-analysis/semgrep/
+# https://go.googlesource.com/vuln
 scan-deps:
-	@go list -json -deps ./... | nancy sleuth --skip-update-check
+	govulncheck -mode source -scan package ./...
+	semgrep --config "p/trailofbits"
+
+## scan-secrets: Scan project code for accidentally leaked secrets
+# https://gitleaks.io
+# gitleaks dir --no-banner -f json -r - | jq -r '.[].Fingerprint' > .gitleaksignore
+scan-secrets:
+	# gitleaks git -v
+	gitleaks dir -v
 
 ## test: Run unit tests excluding the vendor dependencies
 test:

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -113,7 +114,8 @@ func logMiddleware(handler http.Handler) http.Handler {
 			if xf := r.Header.Get("X-Real-Ip"); xf != "" {
 				addr = xf
 			}
-			log.Printf("%s %s %s [%s]\n", addr, r.Method, r.URL, r.UserAgent())
+			// nolint: gosec
+			log.Printf("%s %s %s [%s]\n", url.PathEscape(addr), r.Method, url.PathEscape(r.URL.String()), r.UserAgent())
 		}
 		handler.ServeHTTP(w, r)
 	})
